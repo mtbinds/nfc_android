@@ -43,10 +43,12 @@ import java.sql.Date;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -106,8 +108,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
        //create list of students
        students = new LinkedList();
-       students.add(new Student("4231fba3e6280","Chaourar ","IMINE\n"));
-       students.add(new Student("41a5522245e80","Yugurten","MERZOUK\n"));
+       students.add(new Student("4231fba3e6280","Chaourar ","IMINE"));
+       students.add(new Student("41a5522245e80","Yugurten","MERZOUK"));
 
 
 
@@ -152,14 +154,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        getTagInfo(intent);
+        try {
+            getTagInfo(intent);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
 
-    private void getTagInfo(Intent intent) {
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void getTagInfo(Intent intent) throws ParseException {
         Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
         byte[] uid = intent.getByteArrayExtra(NfcAdapter.EXTRA_ID);
 
@@ -172,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public void afficherMessage(String s) {
+    public void afficherMessage(String s) throws ParseException {
 
        //test read shared preferences
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -194,23 +202,26 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         
 
 
-        //get current time
-
-
-
-        Log.i("startt", exams.toString());
-
-
+        //get spinner Exam
         Exam examNow = exams.stream().filter(e -> e.getModule().equals(examSpinner.getSelectedItem().toString())).collect(Collectors.toCollection(LinkedList::new)).get(0);
 
-        Log.i("starttt", examNow.toString());
+
+
+        // Getting the string
+
+        String dateStartExam  = examNow.getStart_date();
+        long dateStart = this.dateToMiliseconds(dateStartExam);
+
+        String dateEndExam = examNow.getEnd_date();
+        long dateEnd = this.dateToMiliseconds(dateEndExam);
+
+        long currentTime = System.currentTimeMillis();
 
 
 
-/*
-            //if(examNow.getStart_date().isAfter(now) && examNow.getEnd_date().isBefore(now)){
-        if(examNow){
-*/
+
+    if(dateStart <= currentTime && currentTime<= dateEnd){
+
 
 
 
@@ -259,12 +270,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             });
 
         }
-        /*
+
         }else{
             Toast.makeText(MainActivity.this,"Wrong exam selected!", Toast.LENGTH_LONG).show();
 
         }
-*/
+
     }
 
 
@@ -300,4 +311,24 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
+
+
+    public long dateToMiliseconds(String dateEndExam) throws ParseException {
+
+        String year = dateEndExam.substring(0, 4);
+        String month = dateEndExam.substring(4, 6);
+        String day = dateEndExam.substring(6, 8);
+        String hour = dateEndExam.substring(9, 11);
+        String minutes = dateEndExam.substring(11, 13);
+        String miliseconds = dateEndExam.substring(13, 15);
+
+        String sDate1=year+"/"+month+"/"+day+" "+hour+":"+minutes+":"+miliseconds;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
+        long date = sdf.parse(sDate1 ).getTime();
+
+        return  date;
+    }
+
 }
+

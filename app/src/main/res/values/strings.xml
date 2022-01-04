@@ -2,4 +2,12 @@
     <string name="app_name">NFC</string>
     <string name="firstname">FirstName :</string>
     <string name="name">Name :</string>
+
+    <string-array name="exams_spinner">
+        <item>Android</item>
+        <item>Graph</item>
+        <item>Statistics</item>
+        <item>Machine Learning</item>
+    </string-array>
+
 </resources>

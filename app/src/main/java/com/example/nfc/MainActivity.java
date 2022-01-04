@@ -11,16 +11,21 @@ import android.nfc.Tag;
 import android.nfc.tech.MifareUltralight;
 //import android.support.v7.app.AppCompatActivity;
 import android.nfc.tech.Ndef;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.gson.Gson;
@@ -34,23 +39,40 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
+import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     NfcAdapter adapter;
     PendingIntent mPendingIntent;
     LinkedList<Student> students;
+    LinkedList<Exam> exams;
+    Spinner examSpinner;
 
+   @RequiresApi(api = Build.VERSION_CODES.O)
    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Intent intent;
+        //add exams' spinner
+       // Create an ArrayAdapter using the string array and a default spinner layout
+       ArrayAdapter<CharSequence> adapterShapes = ArrayAdapter.createFromResource(this,
+               R.array.exams_spinner, android.R.layout.simple_spinner_item);
+
+       examSpinner = findViewById(R.id.examsSpinner);
+       spinnerParameters(examSpinner, adapterShapes);
+
+
+
+       Intent intent;
         intent = this.getIntent();
 
         NfcManager manager = (NfcManager) this.getSystemService(Context.NFC_SERVICE);
@@ -80,10 +102,17 @@ public class MainActivity extends AppCompatActivity {
        students.add(new Student("4231fba3e6280","Chaourar ","IMINE\n"));
        students.add(new Student("41a5522245e80","Yugurten","MERZOUK\n"));
 
+
+
+       //create list of exams
+       exams = new LinkedList<>();
+       LocalDateTime AndroidStart = LocalDateTime.of(2022,1,3,15,30);
+       LocalDateTime AndroidEnd = LocalDateTime.of(2022,1,3,17,30);
+
+       exams.add(new Exam("Android", AndroidStart, AndroidEnd));
+
        Gson gson = new Gson();
-
        String json = gson.toJson(students);
-
        editor.putString("students", json);
 
 
@@ -129,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = sharedPref.edit();
 
-        TextView t= findViewById(R.id.id);
+
 
         //____________
         String jsonStudents = sharedPref.getString("students","");
@@ -138,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
         LinkedList<Student> students = gson.fromJson(jsonStudents, type);
 
 
-        t.setText(students.toString());
+
         boolean find = false;
         for(int i =0; i < students.size(); i++) {
             if(s.equals(students.get(i).getId())) {
@@ -179,8 +208,6 @@ public class MainActivity extends AppCompatActivity {
                     }
 
 
-
-
                 }
             });
 
@@ -189,5 +216,36 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        Toast.makeText(getApplicationContext(),
+                getResources().getStringArray(R.array.exams_spinner)[position],
+                Toast.LENGTH_SHORT)
+                .show();
+
+        TextView t= findViewById(R.id.id);
+        t.setText(getResources().getStringArray(R.array.exams_spinner)[position]);
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+
+    public void spinnerParameters(Spinner spinner, ArrayAdapter<CharSequence> adapter){
+        // Take the instance of Spinner and
+        // apply OnItemSelectedListener on it which
+        // tells which item of spinner is clicked
+        spinner.setOnItemSelectedListener(this);
+
+
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
+
+    }
 
 }

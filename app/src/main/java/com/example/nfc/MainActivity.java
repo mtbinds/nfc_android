@@ -135,8 +135,13 @@ public class MainActivity extends AppCompatActivity {
 
 
         t.setText(students.toString());
+        for(int i =0; i < students.size(); i++) {
+            if(s.equals(students.get(i).getId())) {
+                Toast.makeText(this, s+"   "+ students.get(i).getFullName(), Toast.LENGTH_LONG).show();
+            }
+        }
 
-        Toast.makeText(this, s+"   "+ students.get(0).getFullName(), Toast.LENGTH_LONG).show();
+
     }
 
 

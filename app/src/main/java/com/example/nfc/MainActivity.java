@@ -2,6 +2,7 @@ package com.example.nfc;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
@@ -11,23 +12,34 @@ import android.nfc.tech.MifareUltralight;
 //import android.support.v7.app.AppCompatActivity;
 import android.nfc.tech.Ndef;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
-    private static final String TAG = "dddddd";
+
     NfcAdapter adapter;
     PendingIntent mPendingIntent;
+    LinkedList<Student> students;
 
    @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +66,25 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+        //sharedPreferneces
+       SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+       SharedPreferences.Editor editor = sharedPref.edit();
 
-    }
+
+       //create list of students
+       students = new LinkedList();
+       students.add(new Student("4231fba3e6280","Chaourar","IMINE"));
+       Gson gson = new Gson();
+
+       String json = gson.toJson(students);
+
+       editor.putString("students", json);
+
+       editor.apply();
+
+
+
+   }
 
     @Override
     protected void onResume() {
@@ -89,7 +118,25 @@ public class MainActivity extends AppCompatActivity {
 
     public void afficherMessage(String s) {
 
-        Toast.makeText(this, s, Toast.LENGTH_LONG).show();
+       //test read shared preferences
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+        TextView t= findViewById(R.id.id);
+
+
+
+
+        //____________
+        String jsonStudents = sharedPref.getString("students","");
+        Gson gson = new Gson();
+        Type type = new TypeToken<LinkedList<Student>>() {}.getType();
+        LinkedList<Student> students = gson.fromJson(jsonStudents, type);
+
+
+        t.setText(students.toString());
+
+        Toast.makeText(this, s+"   "+ students.get(0).getFullName(), Toast.LENGTH_LONG).show();
     }
 
 

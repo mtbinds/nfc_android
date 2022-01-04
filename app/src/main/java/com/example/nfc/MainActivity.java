@@ -73,12 +73,15 @@ public class MainActivity extends AppCompatActivity {
 
        //create list of students
        students = new LinkedList();
-       students.add(new Student("4231fba3e6280","Chaourar","IMINE"));
+       students.add(new Student("4231fba3e6280","Chaourar ","IMINE\n"));
+       students.add(new Student("41a5522245e80","Yugurten","MERZOUK\n"));
+
        Gson gson = new Gson();
 
        String json = gson.toJson(students);
 
        editor.putString("students", json);
+
 
        editor.apply();
 
@@ -123,9 +126,6 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPref.edit();
 
         TextView t= findViewById(R.id.id);
-
-
-
 
         //____________
         String jsonStudents = sharedPref.getString("students","");

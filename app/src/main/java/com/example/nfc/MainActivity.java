@@ -41,11 +41,18 @@ import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.sql.Date;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
@@ -106,14 +113,22 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
        //create list of exams
        exams = new LinkedList<>();
-       LocalDateTime AndroidStart = LocalDateTime.of(2022,1,3,15,30);
-       LocalDateTime AndroidEnd = LocalDateTime.of(2022,1,3,17,30);
+       String pattern = "yyyMMdd-HHmmss";
+       SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+       String start_date = simpleDateFormat.format(new Date(System.currentTimeMillis()-(1000*60*60*2)));
+       String end_date = simpleDateFormat.format(new Date(System.currentTimeMillis()+(1000*60*60*2)));
 
-       exams.add(new Exam("Android", AndroidStart, AndroidEnd));
+
+       exams.add(new Exam("Android", start_date, end_date));
+
+
 
        Gson gson = new Gson();
        String json = gson.toJson(students);
        editor.putString("students", json);
+
+       String jsonExams = gson.toJson(exams);
+       editor.putString("exams", jsonExams);
 
 
        editor.apply();
@@ -136,11 +151,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
+
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         getTagInfo(intent);
     }
+
 
     private void getTagInfo(Intent intent) {
         Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
@@ -152,6 +169,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
 
+
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void afficherMessage(String s) {
 
        //test read shared preferences
@@ -160,11 +180,37 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
 
-        //____________
-        String jsonStudents = sharedPref.getString("students","");
         Gson gson = new Gson();
+        //get students
+        String jsonStudents = sharedPref.getString("students","");
         Type type = new TypeToken<LinkedList<Student>>() {}.getType();
         LinkedList<Student> students = gson.fromJson(jsonStudents, type);
+
+        //get exams
+        String jsonExams = sharedPref.getString("exams","");
+        Type typeExams = new TypeToken<LinkedList<Exam>>() {}.getType();
+        LinkedList<Exam> exams = gson.fromJson(jsonExams, typeExams);
+
+        
+
+
+        //get current time
+
+
+
+        Log.i("startt", exams.toString());
+
+
+        Exam examNow = exams.stream().filter(e -> e.getModule().equals(examSpinner.getSelectedItem().toString())).collect(Collectors.toCollection(LinkedList::new)).get(0);
+
+        Log.i("starttt", examNow.toString());
+
+
+
+/*
+            //if(examNow.getStart_date().isAfter(now) && examNow.getEnd_date().isBefore(now)){
+        if(examNow){
+*/
 
 
 
@@ -172,6 +218,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         for(int i =0; i < students.size(); i++) {
             if(s.equals(students.get(i).getId())) {
                 find = true;
+
                 Toast.makeText(this, s+"   "+ students.get(i).getFullName(), Toast.LENGTH_LONG).show();
                 break;
             }
@@ -212,7 +259,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             });
 
         }
+        /*
+        }else{
+            Toast.makeText(MainActivity.this,"Wrong exam selected!", Toast.LENGTH_LONG).show();
 
+        }
+*/
     }
 
 

@@ -14,6 +14,10 @@ import android.nfc.tech.Ndef;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -135,12 +139,52 @@ public class MainActivity extends AppCompatActivity {
 
 
         t.setText(students.toString());
+        boolean find = false;
         for(int i =0; i < students.size(); i++) {
             if(s.equals(students.get(i).getId())) {
+                find = true;
                 Toast.makeText(this, s+"   "+ students.get(i).getFullName(), Toast.LENGTH_LONG).show();
+                break;
             }
         }
 
+        if(find==false){
+            Toast.makeText(this,"Student not found!  ", Toast.LENGTH_LONG).show();
+
+            LinearLayout linearinfo = findViewById(R.id.linear1);
+            linearinfo.setVisibility(View.VISIBLE);
+
+            Button submit = findViewById(R.id.submit);
+
+            //add the student if not exists
+            submit.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    // Do something in response to button click
+                    EditText nameEdit = findViewById(R.id.nameEditText);
+                    String name = nameEdit.getText().toString();
+
+                    EditText firstNameEdit = findViewById(R.id.firstNameEditText);
+                    String firstName = firstNameEdit.getText().toString();
+
+                    if(firstName.length()<=2 || name.length()<=2){
+                        Toast.makeText(MainActivity.this,"please enter your name ", Toast.LENGTH_LONG).show();
+                    }else{
+                        //add the student to out database
+                        students.add(new Student(s,firstName, name));
+                        String json = gson.toJson(students);
+                        editor.putString("students", json);
+                        editor.apply();
+                        linearinfo.setVisibility(View.INVISIBLE);
+                        Toast.makeText(MainActivity.this,"student added successfully ", Toast.LENGTH_LONG).show();
+                    }
+
+
+
+
+                }
+            });
+
+        }
 
     }
 

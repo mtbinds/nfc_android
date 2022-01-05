@@ -141,12 +141,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         exams = new LinkedList<>();
 
         //date et heure du début de l'examen : Android
-        String input = "20220105-100000" ;  // yyyymmddhhmmss
+        String input = "20220105-180000" ;  // yyyymmddhhmmss
         DateTimeFormatter f = DateTimeFormatter.ofPattern(input) ;
         String start_date = LocalDateTime.now().format(f);
 
         //date et heure de fin de l'xamen : Android
-        String input1 = "20220105-120000" ;  // yyyymmddhhmmss
+        String input1 = "20220105-220000" ;  // yyyymmddhhmmss
         DateTimeFormatter f1 = DateTimeFormatter.ofPattern(input1) ;
         String end_date = LocalDateTime.now().format(f1); ;
 
@@ -453,6 +453,38 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void pdf(View view){
+
+        String path = Environment.getExternalStorageDirectory().toString() + "/Sample.pdf";
+        MainActivity.verifyStoragePermissions(this);
+        try
+        {
+            Log.e("path",path);
+            PDFUtility.createPdf(this,MainActivity.this,getSampleData(),path,true);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            Log.e("TAG","Error Creating Pdf");
+            Toast.makeText(this,"No student is in --> No PDF",Toast.LENGTH_SHORT).show();
+        }
+
+
+
+    }
+
+    @Override
+    public void onPDFDocumentClose(File file)
+    {
+        Toast.makeText(this,"Sample Pdf Created",Toast.LENGTH_SHORT).show();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private List<String[]> getSampleData() throws ParseException {
+        /*int count = 20;
+        if(!TextUtils.isEmpty(rowCount.getText()))
+        {
+            count = Integer.parseInt(rowCount.getText().toString());
+        }*/
         //test read shared preferences
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = sharedPref.edit();
@@ -469,46 +501,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //get spinner Exam
         Exam examNow = exams.stream().filter(e -> e.getModule().equals(examSpinner.getSelectedItem().toString())).collect(Collectors.toCollection(LinkedList::new)).get(0);
 
-        Log.i("ExamNow", examNow.getStudentsTime().toString());
-
-
-
-        String path = Environment.getExternalStorageDirectory().toString() + "/Sample.pdf";
-        MainActivity.verifyStoragePermissions(this);
-        try
-        {
-            Log.e("path",path);
-            PDFUtility.createPdf(this,MainActivity.this,getSampleData(),path,true);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            Log.e("TAG","Error Creating Pdf");
-            Toast.makeText(this,"Error Creating Pdf"+e.toString(),Toast.LENGTH_SHORT).show();
-        }
-
-
-
-    }
-
-    @Override
-    public void onPDFDocumentClose(File file)
-    {
-        Toast.makeText(this,"Sample Pdf Created",Toast.LENGTH_SHORT).show();
-    }
-
-    private List<String[]> getSampleData()
-    {
-        /*int count = 20;
-        if(!TextUtils.isEmpty(rowCount.getText()))
-        {
-            count = Integer.parseInt(rowCount.getText().toString());
-        }*/
-
         List<String[]> temp = new ArrayList<>();
-        for (int i = 0; i < 10; i++)
+        for (StudentTime std:examNow.getStudentsTime())
         {
-            temp.add(new String[] {"C1-R"+ (i+1),"C2-R"+ (i+1)});
+            DateFormat df = new SimpleDateFormat("dd/MM/yyyy-HH:mm");
+            Date dateIn = new Date(this.dateToMiliseconds(std.getDateIn()));
+
+            String end = "Not yet";
+            if(!std.getDateOut().equals("")){
+                Date dateOut = new Date(this.dateToMiliseconds(std.getDateOut()));
+                end= df.format(dateOut);
+            }
+            temp.add(new String[] {std.getFullName(), df.format(dateIn), end, examNow.getModule()});
         }
         return  temp;
     }

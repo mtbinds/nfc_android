@@ -80,7 +80,7 @@ final class PDFUtility
         document.add(createDataTable(items));
 
         addEmptyLine(document,2);
-        document.add(createSignBox());
+        document.add(createSignBox(items.get(0)[3]));
 
         document.close();
 
@@ -212,26 +212,34 @@ final class PDFUtility
 
     private static PdfPTable createDataTable(List<String[]> dataTable) throws DocumentException
     {
-        PdfPTable table1 = new PdfPTable(2);
+        PdfPTable table1 = new PdfPTable(3);
         table1.setWidthPercentage(100);
-        table1.setWidths(new float[]{1f,2f});
+        table1.setWidths(new float[]{2f,2f,2f});//, 4f});
         table1.setHeaderRows(1);
         table1.getDefaultCell().setVerticalAlignment(Element.ALIGN_CENTER);
         table1.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
 
         PdfPCell cell;
         {
-            cell = new PdfPCell(new Phrase("COLUMN - 1", FONT_COLUMN));
+            cell = new PdfPCell(new Phrase("FULLNAME", FONT_COLUMN));
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setPadding(4f);
             table1.addCell(cell);
 
-            cell = new PdfPCell(new Phrase("COLUMN - 2", FONT_COLUMN));
+            cell = new PdfPCell(new Phrase("DATE IN", FONT_COLUMN));
             cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
             cell.setPadding(4f);
             table1.addCell(cell);
+
+
+            cell = new PdfPCell(new Phrase("Date OUT", FONT_COLUMN));
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setPadding(4f);
+            table1.addCell(cell);
+
         }
 
         float top_bottom_Padding = 8f;
@@ -268,13 +276,23 @@ final class PDFUtility
             cell.setBackgroundColor(cell_color);
             table1.addCell(cell);
 
+            cell = new PdfPCell(new Phrase(temp[2], FONT_CELL));
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setPaddingLeft(left_right_Padding);
+            cell.setPaddingRight(left_right_Padding);
+            cell.setPaddingTop(top_bottom_Padding);
+            cell.setPaddingBottom(top_bottom_Padding);
+            cell.setBackgroundColor(cell_color);
+            table1.addCell(cell);
+
             alternate = !alternate;
         }
 
         return table1;
     }
 
-    private static PdfPTable createSignBox() throws DocumentException
+    private static PdfPTable createSignBox(String exam) throws DocumentException
     {
         PdfPTable outerTable = new PdfPTable(1);
         outerTable.setWidthPercentage(100);
@@ -300,22 +318,18 @@ final class PDFUtility
 
             //ROW-3 : Content Left Aligned
             cell = new PdfPCell();
-            Paragraph temp = new Paragraph(new Phrase("Signature of Supervisor",FONT_SUBTITLE));
+            Paragraph temp = new Paragraph(new Phrase(exam,FONT_TITLE));
+            temp.setAlignment(Element.ALIGN_CENTER);
             cell.addElement(temp);
 
-            temp = new Paragraph(new Phrase("( RAVEESH G S )",FONT_SUBTITLE));
-            temp.setPaddingTop(4f);
-            temp.setAlignment(Element.ALIGN_LEFT);
-            cell.addElement(temp);
 
-            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setBorder(PdfPCell.NO_BORDER);
             cell.setPadding(4f);
             innerTable.addCell(cell);
 
-            //ROW-4 : Content Right Aligned
-            cell = new PdfPCell(new Phrase("Signature of Staff ",FONT_SUBTITLE));
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setBorder(PdfPCell.NO_BORDER);
             cell.setPadding(4f);
             innerTable.addCell(cell);

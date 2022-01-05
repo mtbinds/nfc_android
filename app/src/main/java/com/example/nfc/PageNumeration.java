@@ -48,12 +48,14 @@ final class PageNumeration extends PdfPageEventHelper
 
             //2nd Column
             cell = new PdfPCell(new Phrase("Page - ".concat(String.valueOf(writer.getPageNumber())), FONT_FOOTER));
-            cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             cell.setBorder(0);
             cell.setPadding(2f);
             table.addCell(cell);
-            table.setTotalWidth(document.getPageSize().getWidth()-document.leftMargin()-document.rightMargin());
+            table.setTotalWidth(document.getPageSize().getWidth()-document.leftMargin()-document.rightMargin()-200);
             table.writeSelectedRows(0,-1,document.leftMargin(),document.bottomMargin()-5,writer.getDirectContent());
+
+
         }
         catch (Exception ex)
         {

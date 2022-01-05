@@ -344,16 +344,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
             }//end if find
 
-        }  else{
+        }  else if(currentTime < dateStart) {
 
             //on peu commencer à scanner a partir de la date du debut de l'examen
             // ( on considére que l'examen commence 30 min apres la date du debut choisi pour avoir le temps de scanner les etudiant avant le debut de l'examen)
             //exemple : si un examen commence à 10h00, date début sera donc 9h30
             java.util.Date date = new SimpleDateFormat("yyyyMMdd-HHmmss")
                     .parse(dateStartExam);
-            Toast.makeText(MainActivity.this,"You can not scan for this exam till :\n " +date, Toast.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.this, "You can not scan for this exam till :\n " + date, Toast.LENGTH_LONG).show();
 
-        }
+        } else{
+                Toast.makeText(MainActivity.this,"This exam is in the past.", Toast.LENGTH_LONG).show();
+            }
+
+
 
         //set this Exam inside  examsLinkedList
         int index = IntStream.range(0, exams.size())

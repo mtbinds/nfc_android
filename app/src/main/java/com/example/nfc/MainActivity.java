@@ -473,6 +473,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
 
+
         String path = Environment.getExternalStorageDirectory().toString() + "/Sample.pdf";
         MainActivity.verifyStoragePermissions(this);
         try
@@ -499,11 +500,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private List<String[]> getSampleData()
     {
-        /*int count = 20;
-        if(!TextUtils.isEmpty(rowCount.getText()))
-        {
-            count = Integer.parseInt(rowCount.getText().toString());
-        }*/
 
         List<String[]> temp = new ArrayList<>();
         for (int i = 0; i < 10; i++)

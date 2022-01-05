@@ -1,9 +1,12 @@
 package com.example.nfc;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
@@ -14,7 +17,9 @@ import android.nfc.tech.MifareUltralight;
 import android.nfc.tech.Ndef;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -28,6 +33,8 @@ import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatEditText;
+import androidx.core.app.ActivityCompat;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -35,6 +42,7 @@ import com.google.gson.reflect.TypeToken;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
@@ -50,6 +58,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -59,7 +68,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener,PDFUtility.OnDocumentClose{
 
     NfcAdapter adapter;
     PendingIntent mPendingIntent;
@@ -67,11 +76,26 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     LinkedList<Exam> exams;
     Spinner examSpinner;
 
+
+    //_________
+    // Storage Permissions
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+    private static final String TAG = MainActivity.class.getSimpleName();
+    private AppCompatEditText rowCount;
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //pdf
+
+
 
         //add exams' spinner
         // Create an ArrayAdapter using the string array and a default spinner layout
@@ -449,6 +473,59 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
 
+        String path = Environment.getExternalStorageDirectory().toString() + "/Sample.pdf";
+        MainActivity.verifyStoragePermissions(this);
+        try
+        {
+            Log.e("path",path);
+            PDFUtility.createPdf(this,MainActivity.this,getSampleData(),path,true);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            Log.e("TAG","Error Creating Pdf");
+            Toast.makeText(this,"Error Creating Pdf"+e.toString(),Toast.LENGTH_SHORT).show();
+        }
+
+
+
+    }
+
+    @Override
+    public void onPDFDocumentClose(File file)
+    {
+        Toast.makeText(this,"Sample Pdf Created",Toast.LENGTH_SHORT).show();
+    }
+
+    private List<String[]> getSampleData()
+    {
+        /*int count = 20;
+        if(!TextUtils.isEmpty(rowCount.getText()))
+        {
+            count = Integer.parseInt(rowCount.getText().toString());
+        }*/
+
+        List<String[]> temp = new ArrayList<>();
+        for (int i = 0; i < 10; i++)
+        {
+            temp.add(new String[] {"C1-R"+ (i+1),"C2-R"+ (i+1)});
+        }
+        return  temp;
+    }
+
+
+    public static void verifyStoragePermissions(Activity activity) {
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    activity,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+        }
     }
 
 }

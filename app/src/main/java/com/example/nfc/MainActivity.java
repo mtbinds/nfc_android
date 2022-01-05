@@ -474,7 +474,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
 
-        String path = Environment.getExternalStorageDirectory().toString() + "/Sample.pdf";
+        String path = Environment.getExternalStorageDirectory().toString() + "/Documents/Examen"+examNow.getModule()+".pdf";
+        Log.i("Files", "Path: " + path);
         MainActivity.verifyStoragePermissions(this);
         try
         {

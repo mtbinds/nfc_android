@@ -15,6 +15,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -115,14 +116,28 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
        //create list of exams
        exams = new LinkedList<>();
-       String pattern = "yyyMMdd-HHmmss";
-       SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-       String start_date = simpleDateFormat.format(new Date(System.currentTimeMillis()-(1000*60*60*2)));
-       String end_date = simpleDateFormat.format(new Date(System.currentTimeMillis()+(1000*60*60*2)));
+       //String pattern = "yyyyMMdd-HHmmss";
+       //SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+
+
+       //date et heure du début de l'examen : Android
+       String input = "20220105-100000" ;  // yyyymmddhhmmss
+       DateTimeFormatter f = DateTimeFormatter.ofPattern(input) ;
+       String start_date = LocalDateTime.now().format(f);
+
+       //date et heure de fin de l'xamen : Android
+       String input1 = "20220105-120000" ;  // yyyymmddhhmmss
+       DateTimeFormatter f1 = DateTimeFormatter.ofPattern(input1) ;
+       String end_date = LocalDateTime.now().format(f1); ;
+
+
+
+       //String start_date = simpleDateFormat.format(new Date(System.currentTimeMillis()-(1000*60*60*2)));
+       //String end_date = simpleDateFormat.format(new Date(System.currentTimeMillis()+(1000*60*60*2)));
 
 
        exams.add(new Exam("Android", start_date, end_date));
-
+       Log.i("aaa", exams.toString());
 
 
        Gson gson = new Gson();
@@ -182,6 +197,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void afficherMessage(String s) throws ParseException {
 
+
        //test read shared preferences
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = sharedPref.edit();
@@ -199,8 +215,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         Type typeExams = new TypeToken<LinkedList<Exam>>() {}.getType();
         LinkedList<Exam> exams = gson.fromJson(jsonExams, typeExams);
 
-        
 
+        //Log.i("aaa", exams.toString());
 
         //get spinner Exam
         Exam examNow = exams.stream().filter(e -> e.getModule().equals(examSpinner.getSelectedItem().toString())).collect(Collectors.toCollection(LinkedList::new)).get(0);
@@ -221,9 +237,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
     if(dateStart <= currentTime && currentTime<= dateEnd){
-
-
-
 
         boolean find = false;
         for(int i =0; i < students.size(); i++) {
@@ -269,10 +282,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
             });
 
+
+
         }
 
+
+
         }else{
-            Toast.makeText(MainActivity.this,"Wrong exam selected!", Toast.LENGTH_LONG).show();
+
+        //LocalDate date = LocalDate.parse(dateStartExam, DateTimeFormatter.BASIC_ISO_DATE);
+        java.util.Date date = new SimpleDateFormat("yyyyMMdd-HHmmss")
+                .parse(dateStartExam);
+            Toast.makeText(MainActivity.this,"Wrong exam selected! or you need to wait till "+date+"to start scanning", Toast.LENGTH_LONG).show();
 
         }
 

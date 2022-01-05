@@ -200,6 +200,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void afficherMessage(String s) throws ParseException {
 
+        //make liner invisible
+        LinearLayout linearinfo = findViewById(R.id.linear1);
+        linearinfo.setVisibility(View.INVISIBLE);
+
         //test read shared preferences
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = sharedPref.edit();
@@ -302,7 +306,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             if (find == false) {
                 Toast.makeText(this, "Student not found!  ", Toast.LENGTH_LONG).show();
 
-                LinearLayout linearinfo = findViewById(R.id.linear1);
+
                 linearinfo.setVisibility(View.VISIBLE);
 
                 Button submit = findViewById(R.id.submit);
@@ -417,6 +421,30 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         long date = sdf.parse(sDate1).getTime();
 
         return date;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void pdf(View view){
+        //test read shared preferences
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+
+        Gson gson = new Gson();
+
+        //get exams
+        String jsonExams = sharedPref.getString("exams", "");
+        Type typeExams = new TypeToken<LinkedList<Exam>>() {
+        }.getType();
+        LinkedList<Exam> exams = gson.fromJson(jsonExams, typeExams);
+
+        //get spinner Exam
+        Exam examNow = exams.stream().filter(e -> e.getModule().equals(examSpinner.getSelectedItem().toString())).collect(Collectors.toCollection(LinkedList::new)).get(0);
+
+        Log.i("ExamNow", examNow.getStudentsTime().toString());
+
+
+
     }
 
 }

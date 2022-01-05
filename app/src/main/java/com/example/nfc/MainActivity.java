@@ -130,6 +130,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
        DateTimeFormatter f1 = DateTimeFormatter.ofPattern(input1) ;
        String end_date = LocalDateTime.now().format(f1); ;
 
+       //date et heure du début de l'examen : graph
+       String input2 = "20220105-123000" ;  // yyyymmddhhmmss
+       DateTimeFormatter f2 = DateTimeFormatter.ofPattern(input2) ;
+       String start_date1 = LocalDateTime.now().format(f2);
+
+       //date et heure de fin de l'xamen : graph
+       String input3 = "20220105-143000" ;  // yyyymmddhhmmss
+       DateTimeFormatter f3 = DateTimeFormatter.ofPattern(input3) ;
+       String end_date1 = LocalDateTime.now().format(f3); ;
+
 
 
        //String start_date = simpleDateFormat.format(new Date(System.currentTimeMillis()-(1000*60*60*2)));
@@ -137,6 +147,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
        exams.add(new Exam("Android", start_date, end_date));
+       exams.add(new Exam("Graph", start_date1, end_date1));
        Log.i("aaa", exams.toString());
 
 
@@ -290,10 +301,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         }else{
 
-        //LocalDate date = LocalDate.parse(dateStartExam, DateTimeFormatter.BASIC_ISO_DATE);
+        //on peu commencer à scanner a partir de la date du debut de l'examen
+        // ( on considére que l'examen commence 30 min apres la date du debut choisi pour avoir le temps de scanner les etudiant avant le debut de l'examen)
+        //exemple : si un examen commence à 10h00, date début sera donc 9h30
         java.util.Date date = new SimpleDateFormat("yyyyMMdd-HHmmss")
                 .parse(dateStartExam);
-            Toast.makeText(MainActivity.this,"Wrong exam selected! or you need to wait till "+date+"to start scanning", Toast.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.this,"You can not scan for this exam till :\n " +date, Toast.LENGTH_LONG).show();
 
         }
 

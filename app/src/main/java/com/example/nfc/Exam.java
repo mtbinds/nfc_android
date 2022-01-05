@@ -1,3 +1,4 @@
+
 package com.example.nfc;
 
 import android.os.Build;
@@ -14,7 +15,7 @@ public class Exam {
     private String module;
     private String start_date;
     private String end_date;
-    private LinkedList<StudentTime> studentsTime;
+    private LinkedList<StudentTime> studentsTime = new LinkedList<>();
 
     public Exam(String module, String start_date, String end_date) {
         this.module = module;
@@ -64,3 +65,4 @@ public class Exam {
                 '}';
     }
 }
+

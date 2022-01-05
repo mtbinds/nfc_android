@@ -15,7 +15,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -56,6 +55,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
@@ -66,23 +66,23 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     LinkedList<Exam> exams;
     Spinner examSpinner;
 
-   @RequiresApi(api = Build.VERSION_CODES.O)
-   @Override
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         //add exams' spinner
-       // Create an ArrayAdapter using the string array and a default spinner layout
-       ArrayAdapter<CharSequence> adapterShapes = ArrayAdapter.createFromResource(this,
-               R.array.exams_spinner, android.R.layout.simple_spinner_item);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapterShapes = ArrayAdapter.createFromResource(this,
+                R.array.exams_spinner, android.R.layout.simple_spinner_item);
 
-       examSpinner = findViewById(R.id.examsSpinner);
-       spinnerParameters(examSpinner, adapterShapes);
+        examSpinner = findViewById(R.id.examsSpinner);
+        spinnerParameters(examSpinner, adapterShapes);
 
 
 
-       Intent intent;
+        Intent intent;
         intent = this.getIntent();
 
         NfcManager manager = (NfcManager) this.getSystemService(Context.NFC_SERVICE);
@@ -103,67 +103,65 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
         //sharedPreferneces
-       SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-       SharedPreferences.Editor editor = sharedPref.edit();
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPref.edit();
 
 
-       //create list of students
-       students = new LinkedList();
-       students.add(new Student("4231fba3e6280","Chaourar ","IMINE"));
-       students.add(new Student("41a5522245e80","Yugurten","MERZOUK"));
-
-
-
-       //create list of exams
-       exams = new LinkedList<>();
-       //String pattern = "yyyyMMdd-HHmmss";
-       //SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-
-
-       //date et heure du début de l'examen : Android
-       String input = "20220105-100000" ;  // yyyymmddhhmmss
-       DateTimeFormatter f = DateTimeFormatter.ofPattern(input) ;
-       String start_date = LocalDateTime.now().format(f);
-
-       //date et heure de fin de l'xamen : Android
-       String input1 = "20220105-120000" ;  // yyyymmddhhmmss
-       DateTimeFormatter f1 = DateTimeFormatter.ofPattern(input1) ;
-       String end_date = LocalDateTime.now().format(f1); ;
-
-       //date et heure du début de l'examen : graph
-       String input2 = "20220105-123000" ;  // yyyymmddhhmmss
-       DateTimeFormatter f2 = DateTimeFormatter.ofPattern(input2) ;
-       String start_date1 = LocalDateTime.now().format(f2);
-
-       //date et heure de fin de l'xamen : graph
-       String input3 = "20220105-143000" ;  // yyyymmddhhmmss
-       DateTimeFormatter f3 = DateTimeFormatter.ofPattern(input3) ;
-       String end_date1 = LocalDateTime.now().format(f3); ;
+        //create list of students
+        students = new LinkedList();
+        students.add(new Student("4231fba3e6280","Chaourar ","IMINE"));
+        students.add(new Student("41a5522245e80","Yugurten","MERZOUK"));
 
 
 
-       //String start_date = simpleDateFormat.format(new Date(System.currentTimeMillis()-(1000*60*60*2)));
-       //String end_date = simpleDateFormat.format(new Date(System.currentTimeMillis()+(1000*60*60*2)));
+        //create list of exams
+        exams = new LinkedList<>();
+        //date et heure du début de l'examen : Android
+        String input = "20220105-100000" ;  // yyyymmddhhmmss
+        DateTimeFormatter f = DateTimeFormatter.ofPattern(input) ;
+        String start_date = LocalDateTime.now().format(f);
+
+        //date et heure de fin de l'xamen : Android
+        String input1 = "20220105-120000" ;  // yyyymmddhhmmss
+        DateTimeFormatter f1 = DateTimeFormatter.ofPattern(input1) ;
+        String end_date = LocalDateTime.now().format(f1); ;
+
+        //date et heure du début de l'examen : graph
+        String input2 = "20220105-123000" ;  // yyyymmddhhmmss
+        DateTimeFormatter f2 = DateTimeFormatter.ofPattern(input2) ;
+        String start_date1 = LocalDateTime.now().format(f2);
+
+        //date et heure de fin de l'xamen : graph
+        String input3 = "20220105-143000" ;  // yyyymmddhhmmss
+        DateTimeFormatter f3 = DateTimeFormatter.ofPattern(input3) ;
+        String end_date1 = LocalDateTime.now().format(f3); ;
 
 
-       exams.add(new Exam("Android", start_date, end_date));
-       exams.add(new Exam("Graph", start_date1, end_date1));
-       Log.i("aaa", exams.toString());
+
+        //String pattern = "yyyMMdd-HHmmss";
+        //SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        //String start_date = simpleDateFormat.format(new Date(System.currentTimeMillis()-(1000*60*60*2)));
+        //String end_date = simpleDateFormat.format(new Date(System.currentTimeMillis()+(1000*60*60*2)));
 
 
-       Gson gson = new Gson();
-       String json = gson.toJson(students);
-       editor.putString("students", json);
-
-       String jsonExams = gson.toJson(exams);
-       editor.putString("exams", jsonExams);
-
-
-       editor.apply();
+        exams.add(new Exam("Android", start_date, end_date));
+        exams.add(new Exam("Graph", start_date1, end_date1));
 
 
 
-   }
+        Gson gson = new Gson();
+        String json = gson.toJson(students);
+        editor.putString("students", json);
+
+        String jsonExams = gson.toJson(exams);
+        editor.putString("exams", jsonExams);
+
+
+        editor.apply();
+
+
+
+    }
 
     @Override
     protected void onResume() {
@@ -208,8 +206,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void afficherMessage(String s) throws ParseException {
 
-
-       //test read shared preferences
+        //test read shared preferences
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = sharedPref.edit();
 
@@ -227,7 +224,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         LinkedList<Exam> exams = gson.fromJson(jsonExams, typeExams);
 
 
-        //Log.i("aaa", exams.toString());
+
 
         //get spinner Exam
         Exam examNow = exams.stream().filter(e -> e.getModule().equals(examSpinner.getSelectedItem().toString())).collect(Collectors.toCollection(LinkedList::new)).get(0);
@@ -244,71 +241,136 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         long currentTime = System.currentTimeMillis();
 
+        //get current date
+        String pattern = "yyyMMdd-HHmmss";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        String scanDate = simpleDateFormat.format(new Date(System.currentTimeMillis()));
+
+
+        if(dateStart <= currentTime && currentTime<= dateEnd){
 
 
 
-    if(dateStart <= currentTime && currentTime<= dateEnd){
 
-        boolean find = false;
-        for(int i =0; i < students.size(); i++) {
-            if(s.equals(students.get(i).getId())) {
-                find = true;
+            boolean find = false;
+            for(int i =0; i < students.size(); i++) {
+                //if the student exists, then add him to the exam's students list
+                Student student = students.get(i);
+                if(s.equals(student.getId())) {
+                    find = true;
 
-                Toast.makeText(this, s+"   "+ students.get(i).getFullName(), Toast.LENGTH_LONG).show();
-                break;
-            }
-        }
+                    //add the student to the list
 
-        if(find==false){
-            Toast.makeText(this,"Student not found!  ", Toast.LENGTH_LONG).show();
 
-            LinearLayout linearinfo = findViewById(R.id.linear1);
-            linearinfo.setVisibility(View.VISIBLE);
+                    //first look if this student has scaned before
+                    Student studentScan = examNow.getStudentsTime().stream().filter(e -> e.getId().equals(s)).findFirst().orElse(null);
 
-            Button submit = findViewById(R.id.submit);
+                    Log.i("first", "first");
+                    //the first scan
+                    if(studentScan == null){
+                        examNow.getStudentsTime().add(new StudentTime(student.getId(), student.getFirstName(), student.getName(), scanDate, ""));
+                        Log.i("first", "first");
+                        Toast.makeText(this, s+"   "+ student.getFullName(), Toast.LENGTH_LONG).show();
 
-            //add the student if not exists
-            submit.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    // Do something in response to button click
-                    EditText nameEdit = findViewById(R.id.nameEditText);
-                    String name = nameEdit.getText().toString();
-
-                    EditText firstNameEdit = findViewById(R.id.firstNameEditText);
-                    String firstName = firstNameEdit.getText().toString();
-
-                    if(firstName.length()<=2 || name.length()<=2){
-                        Toast.makeText(MainActivity.this,"please enter your name ", Toast.LENGTH_LONG).show();
                     }else{
-                        //add the student to out database
-                        students.add(new Student(s,firstName, name));
-                        String json = gson.toJson(students);
-                        editor.putString("students", json);
-                        editor.apply();
-                        linearinfo.setVisibility(View.INVISIBLE);
-                        Toast.makeText(MainActivity.this,"student added successfully ", Toast.LENGTH_LONG).show();
+
+                        Log.i("second", "second");
+                        //modify this student endTime
+                        LinkedList<StudentTime> studentsTime = examNow.getStudentsTime();
+                        int index = IntStream.range(0, studentsTime.size())
+                                .filter(j -> studentsTime.get(j).getId().equals(s))
+                                .findFirst()
+                                .orElse(-1);
+                        //the second scan
+                        if(studentsTime.get(index).getDateOut().equals("")){
+                            Toast.makeText(this, s+"   "+ student.getFullName(), Toast.LENGTH_LONG).show();
+                            studentsTime.get(index).setDateOut(scanDate);
+                            //set StudentsTimeList
+                            examNow.setStudentsTime(studentsTime);
+                        }else{//scan 3
+
+                            Toast.makeText(this,studentsTime.get(index).getFullName()+ " has scanned twice!!", Toast.LENGTH_LONG).show();
+
+                        }
+
+
                     }
 
 
+
+                    break;
                 }
-            });
+            }
 
 
 
-        }
+            //if the student doesn't exist, ther enter full name
+            if(find==false){
+                Toast.makeText(this,"Student not found!  ", Toast.LENGTH_LONG).show();
+
+                LinearLayout linearinfo = findViewById(R.id.linear1);
+                linearinfo.setVisibility(View.VISIBLE);
+
+                Button submit = findViewById(R.id.submit);
+
+                //add the student if not exists
+                submit.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        // Do something in response to button click
+                        EditText nameEdit = findViewById(R.id.nameEditText);
+                        String name = nameEdit.getText().toString();
+
+                        EditText firstNameEdit = findViewById(R.id.firstNameEditText);
+                        String firstName = firstNameEdit.getText().toString();
+
+                        if(firstName.length()<=2 || name.length()<=2){
+                            Toast.makeText(MainActivity.this,"please enter your name ", Toast.LENGTH_LONG).show();
+                        }else{
+                            //add the student to out database
+                            students.add(new Student(s,firstName, name));
+                            String json = gson.toJson(students);
+                            editor.putString("students", json);
+                            editor.apply();
+                            linearinfo.setVisibility(View.INVISIBLE);
+                            Toast.makeText(MainActivity.this,"student added successfully ", Toast.LENGTH_LONG).show();
+
+                            //add student to exam list
+                            examNow.getStudentsTime().add(new StudentTime(s, firstName, name, scanDate, ""));
 
 
+                        }
+
+
+                    }
+                });
+
+            }//end if find
 
         }else{
 
-        //on peu commencer à scanner a partir de la date du debut de l'examen
-        // ( on considére que l'examen commence 30 min apres la date du debut choisi pour avoir le temps de scanner les etudiant avant le debut de l'examen)
-        //exemple : si un examen commence à 10h00, date début sera donc 9h30
-        java.util.Date date = new SimpleDateFormat("yyyyMMdd-HHmmss")
-                .parse(dateStartExam);
+            //on peu commencer à scanner a partir de la date du debut de l'examen
+            // ( on considére que l'examen commence 30 min apres la date du debut choisi pour avoir le temps de scanner les etudiant avant le debut de l'examen)
+            //exemple : si un examen commence à 10h00, date début sera donc 9h30
+            java.util.Date date = new SimpleDateFormat("yyyyMMdd-HHmmss")
+                    .parse(dateStartExam);
             Toast.makeText(MainActivity.this,"You can not scan for this exam till :\n " +date, Toast.LENGTH_LONG).show();
 
         }
+
+        //set this Exam inside  examsLinkedList
+        int index = IntStream.range(0, exams.size())
+                .filter(j -> exams.get(j).getModule().equals(examSpinner.getSelectedItem().toString()))
+                .findFirst()
+                .orElse(-1);
+
+
+        exams.set(index, examNow);
+        //refresh shared Preferences by changing exams
+//        Log.i("imine",examNow.getStudentsTime().toString());
+        Log.i("imine",examNow.getStudentsTime().toString());
+        String json = gson.toJson(exams);
+        editor.putString("exams", json);
+        editor.apply();
 
     }
 
@@ -365,4 +427,3 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
 }
-

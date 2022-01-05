@@ -3,36 +3,37 @@ package com.example.nfc;
 import java.util.Date;
 
 public class StudentTime extends  Student{
-    private Date dateIn;
-    private Date dateOut;
 
-    public StudentTime(String id, String firstName, String name, Date dateIn, Date dateOut) {
+    private String dateIn;
+    private String dateOut;
+
+    public StudentTime(String id, String firstName, String name, String dateIn, String dateOut) {
         super(id, firstName, name);
         this.dateIn = dateIn;
         this.dateOut = dateOut;
     }
 
-    public Date getDateIn() {
+    public String getDateIn() {
         return dateIn;
     }
 
-    public void setDateIn(Date dateIn) {
+    public void setDateIn(String dateIn) {
         this.dateIn = dateIn;
     }
 
-    public Date getDateOut() {
+    public String getDateOut() {
         return dateOut;
     }
 
-    public void setDateOut(Date dateOut) {
+    public void setDateOut(String dateOut) {
         this.dateOut = dateOut;
     }
 
     @Override
     public String toString() {
-        return super.toString()+"   StudentTime{" +
-                "dateIn=" + dateIn +
-                ", dateOut=" + dateOut +
+        return super.toString()+" StudentTime{" +
+                "dateIn='" + dateIn + '\'' +
+                ", dateOut='" + dateOut + '\'' +
                 '}';
     }
 }

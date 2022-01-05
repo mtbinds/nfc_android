@@ -454,7 +454,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void pdf(View view){
 
-        String path = Environment.getExternalStorageDirectory().toString() + "/Sample.pdf";
+        //get spinner Exam
+        Exam examNow = exams.stream().filter(e -> e.getModule().equals(examSpinner.getSelectedItem().toString())).collect(Collectors.toCollection(LinkedList::new)).get(0);
+
+        String path = Environment.getExternalStorageDirectory().toString() + "/Documents/Examen"+examNow.getModule()+".pdf";
+        Log.i("Files", "Path: " + path);
         MainActivity.verifyStoragePermissions(this);
         try
         {
@@ -478,6 +482,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         Toast.makeText(this,"Sample Pdf Created",Toast.LENGTH_SHORT).show();
     }
 
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     private List<String[]> getSampleData() throws ParseException {
         /*int count = 20;
@@ -500,6 +505,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         //get spinner Exam
         Exam examNow = exams.stream().filter(e -> e.getModule().equals(examSpinner.getSelectedItem().toString())).collect(Collectors.toCollection(LinkedList::new)).get(0);
+
 
         List<String[]> temp = new ArrayList<>();
         for (StudentTime std:examNow.getStudentsTime())

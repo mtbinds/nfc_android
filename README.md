@@ -1,6 +1,6 @@
 <h1>Projet NFC</h1>
 
-<h3>Les Membres du groupe:</h3>
+<b>Les Membres du groupe:</b>
 - Chaourar IMINE
 - Idir LACHEB
 - MERZOUK yugurten
@@ -25,7 +25,7 @@ il faut alors rescanner cette carte pour enregistrer la date de rentré.
 
 
 Le pdf peut être généré si ou moins un étudiant est rentré, ils se trouvent dans le
-dossier document de votre téléphone : ExamanXXX.pdf
+dossier document de votre téléphone : <b>/Documents/ExamanXXX.pdf</b>
 
 
 

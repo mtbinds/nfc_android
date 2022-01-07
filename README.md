@@ -1,7 +1,6 @@
+<h1>Projet NFC</h1>
 
-#Projet NFC
-
-Les Membres du groupe:
+<h3>Les Membres du groupe:</h3>
 - Chaourar IMINE
 - Idir LACHEB
 - MERZOUK yugurten
@@ -10,8 +9,8 @@ Les Membres du groupe:
 <h3>Le fonctionnement de l'application:</h3>
 
 Vous pouvez choisir l'examen à l'aide d'un spinner. Les horaires de
-chaque examen sont fixés dans la méthode onCreate, concernant l'examen
-d'Android heure de début = current time - 2 heure et heure fin = current time + 2 heures.
+chaque examen sont fixés dans la méthode onCreate, <b>concernant l'examen
+d'Android heure de début = current time - 2 heure et heure fin = current time + 2 heures.</b>
 
 
 Si vous essayiez de scanner une carte dans un horaire qui ne correspond pas

@@ -1,14 +1,9 @@
 
-package com.example.nfc;
+package com.example.nfc.models;
 
-import android.os.Build;
+import com.example.nfc.models.StudentTime;
 
-import androidx.annotation.RequiresApi;
-
-import java.sql.Date;
-import java.time.LocalDateTime;
 import java.util.LinkedList;
-import java.util.Objects;
 
 public class Exam {
 

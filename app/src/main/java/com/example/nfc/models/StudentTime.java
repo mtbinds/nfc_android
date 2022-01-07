@@ -1,8 +1,8 @@
-package com.example.nfc;
+package com.example.nfc.models;
 
-import java.util.Date;
+import com.example.nfc.models.Student;
 
-public class StudentTime extends  Student{
+public class StudentTime extends Student {
 
     private String dateIn;
     private String dateOut;

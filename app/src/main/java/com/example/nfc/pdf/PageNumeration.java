@@ -1,4 +1,4 @@
-package com.example.nfc;
+package com.example.nfc.pdf;
 
 
 import android.util.Log;
@@ -14,7 +14,7 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfWriter;
 
-final class PageNumeration extends PdfPageEventHelper
+public final class PageNumeration extends PdfPageEventHelper
 {
     private static String TAG        = PageNumeration.class.getSimpleName();
     private static Font FONT_FOOTER  = new Font(Font.FontFamily.TIMES_ROMAN,  8, Font.NORMAL, BaseColor.DARK_GRAY);

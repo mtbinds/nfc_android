@@ -7,19 +7,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.nfc.NdefMessage;
-import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcManager;
 import android.nfc.Tag;
-import android.nfc.tech.MifareUltralight;
 //import android.support.v7.app.AppCompatActivity;
-import android.nfc.tech.Ndef;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -36,39 +31,30 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.core.app.ActivityCompat;
 
+import com.example.nfc.models.Exam;
+import com.example.nfc.models.Student;
+import com.example.nfc.models.StudentTime;
+import com.example.nfc.pdf.PDFUtility;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.math.BigInteger;
-import java.nio.charset.Charset;
 import java.sql.Date;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener,PDFUtility.OnDocumentClose{
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, PDFUtility.OnDocumentClose{
 
     NfcAdapter adapter;
     PendingIntent mPendingIntent;
@@ -150,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         exams.add(new Exam("Android", androidStartDate, androidEndDate));
         exams.add(new Exam("Graph", this.getDate("20220107-123000"), this.getDate("20220107-143000")));
         exams.add(new Exam("Statistics", this.getDate("20220108-123000"), this.getDate("20220108-143000")));
-        exams.add(new Exam("Machine Learning", this.getDate("20220109-123000"), this.getDate("20220109-143000")));
+        exams.add(new Exam("Machine Learning", this.getDate("20220129-123000"), this.getDate("20220129-143000")));
 
 
         Gson gson = new Gson();
@@ -279,7 +265,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     if (studentScan == null) {
                         examNow.getStudentsTime().add(new StudentTime(student.getId(), student.getFirstName(), student.getName(), scanDate, ""));
                         Log.i("first", "first");
-                        Toast.makeText(this, s + "   " + student.getFullName(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, student.getFullName()+ " : 1", Toast.LENGTH_LONG).show();
 
                     } else {
 
@@ -294,7 +280,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         //the second scan must be 10 min after teh first
                         if (System.currentTimeMillis() > this.dateToMiliseconds(studentsTime.get(index).getDateIn()) + (1000*60)) {
                             if (studentsTime.get(index).getDateOut().equals("")) {
-                                Toast.makeText(this, s + "   " + student.getFullName(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(this, student.getFullName()+ " : 2", Toast.LENGTH_LONG).show();
                                 studentsTime.get(index).setDateOut(scanDate);
                                 //set StudentsTimeList
                                 examNow.setStudentsTime(studentsTime);

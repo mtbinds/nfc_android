@@ -140,34 +140,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //create list of exams
         exams = new LinkedList<>();
 
-        //date et heure du début de l'examen : Android
-        String input = "20220105-180000" ;  // yyyymmddhhmmss
-        DateTimeFormatter f = DateTimeFormatter.ofPattern(input) ;
-        String start_date = LocalDateTime.now().format(f);
 
-        //date et heure de fin de l'xamen : Android
-        String input1 = "20220105-220000" ;  // yyyymmddhhmmss
-        DateTimeFormatter f1 = DateTimeFormatter.ofPattern(input1) ;
-        String end_date = LocalDateTime.now().format(f1); ;
-
-        //date et heure du début de l'examen : graph
-        String input2 = "20220105-123000" ;  // yyyymmddhhmmss
-        DateTimeFormatter f2 = DateTimeFormatter.ofPattern(input2) ;
-        String start_date1 = LocalDateTime.now().format(f2);
-
-        //date et heure de fin de l'xamen : graph
-        String input3 = "20220105-143000" ;  // yyyymmddhhmmss
-        DateTimeFormatter f3 = DateTimeFormatter.ofPattern(input3) ;
-        String end_date1 = LocalDateTime.now().format(f3); ;
-
-        //String pattern = "yyyMMdd-HHmmss";
-        //SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-        //String start_date = simpleDateFormat.format(new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 2)));
-        //String end_date = simpleDateFormat.format(new Date(System.currentTimeMillis() + (1000 * 60 * 60 * 2)));
+        String pattern = "yyyMMdd-HHmmss";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        String androidStartDate = simpleDateFormat.format(new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 2)));
+        String androidEndDate = simpleDateFormat.format(new Date(System.currentTimeMillis() + (1000 * 60 * 60 * 2)));
 
 
-        exams.add(new Exam("Android", start_date, end_date));
-        exams.add(new Exam("Graph", start_date1, end_date1));
+        exams.add(new Exam("Android", androidStartDate, androidEndDate));
+        exams.add(new Exam("Graph", this.getDate("20220107-123000"), this.getDate("20220107-143000")));
+        exams.add(new Exam("Statistics", this.getDate("20220108-123000"), this.getDate("20220108-143000")));
+        exams.add(new Exam("Machine Learning", this.getDate("20220109-123000"), this.getDate("20220109-143000")));
 
 
         Gson gson = new Gson();
@@ -181,6 +164,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         editor.apply();
 
 
+    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public String getDate(String s){
+        DateTimeFormatter f3 = DateTimeFormatter.ofPattern(s) ;
+        String end_date1 = LocalDateTime.now().format(f3);
+        return  end_date1;
     }
 
     @Override
@@ -409,7 +400,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 .show();
 
         TextView t = findViewById(R.id.id);
-        t.setText(getResources().getStringArray(R.array.exams_spinner)[position]);
+        t.setText(getResources().getStringArray(R.array.exams_spinner)[position]+" Exam checking cards:");
 
     }
 
